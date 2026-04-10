@@ -25,7 +25,7 @@ plt.rcParams.update({"font.family": "DejaVu Sans", "axes.spines.top": False,
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 OUT        = os.path.join(SCRIPT_DIR, "figures")
 DATA_PATH  = "cycling-network_-_4326.csv"
-YEAR_NOW   = 2024
+YEAR_NOW   = 2026
 os.makedirs(OUT, exist_ok=True)
 
 
@@ -569,3 +569,20 @@ print(f"  HIGH band        : {band_counts.get('HIGH',0)} segments / {band_km.get
 print(f"  Est. 2-yr invest : ${est_cost_critical:,.0f}  (CRITICAL segments)")
 print(f"  Est. 4-yr invest : ${est_cost_critical+est_cost_high:,.0f}  (CRITICAL + HIGH)")
 print("\nAll figures saved to ./figures/   Done ✓")
+
+# Verify all costs against band km and blended $/km rates
+COST_RATES = {
+    "CRITICAL": 130_000,   # $/km — blended rate for Sharrow/Signed Route → Cycle Track
+    "HIGH":     110_000,   # $/km — mixed low-tier arterial conversions
+    "MEDIUM":    90_000,   # $/km — Bike Lane upgrades (lower complexity)
+    "LOW":           0,    # not recommended for current cycle
+}
+
+print("\n  COST VERIFICATION TABLE")
+print(f"  {'Band':<10} {'km':>8}  {'Rate ($/km)':>12}  {'Est. Cost':>14}")
+print("  " + "-" * 50)
+for band in ["CRITICAL", "HIGH", "MEDIUM", "LOW"]:
+    km   = band_km.get(band, 0)
+    rate = COST_RATES[band]
+    cost = km * rate
+    print(f"  {band:<10} {km:>8.1f}  ${rate:>11,}  ${cost:>13,.0f}")
